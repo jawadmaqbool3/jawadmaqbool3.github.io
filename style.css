@@ -142,17 +142,16 @@ nav.scrolled {
 }
 
 .nav-initials {
-  width: 34px; height: 34px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  width: 42px; height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.03em;
   flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(108, 99, 255, 0.45));
+  transition: filter 0.3s;
+}
+.nav-logo:hover .nav-initials {
+  filter: drop-shadow(0 0 10px rgba(108, 99, 255, 0.7));
 }
 
 .nav-name {

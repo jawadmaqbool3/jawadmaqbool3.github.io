@@ -251,8 +251,35 @@ const NAV_LINKS = ["about","skills","experience","projects","achievements","cont
 
 document.getElementById("nav").innerHTML = `
   <a href="#hero" class="nav-logo">
-    <span class="nav-initials">${d.name.split(" ").map(n => n[0]).join("")}</span>
-    <span class="nav-name">${d.name}</span>
+    <span class="nav-initials">
+      <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="jd-g" x1="2" y1="2" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#6c63ff"/>
+            <stop offset="1" stop-color="#00d4aa"/>
+          </linearGradient>
+          <clipPath id="jd-clip">
+            <text x="21" y="31" text-anchor="middle"
+                  font-family="'Inter','Arial Black',sans-serif"
+                  font-size="25" font-weight="900" letter-spacing="-1.5">JD</text>
+          </clipPath>
+        </defs>
+        <!-- Badge background -->
+        <rect width="42" height="42" rx="11" fill="#0a0c13"/>
+        <!-- Subtle inner glow -->
+        <rect width="42" height="42" rx="11" fill="rgba(108,99,255,0.07)"/>
+        <!-- Gradient border -->
+        <rect x="0.85" y="0.85" width="40.3" height="40.3" rx="10.3" stroke="url(#jd-g)" stroke-width="1.3"/>
+        <!-- Mummy stripes clipped to JD letterforms -->
+        <g clip-path="url(#jd-clip)">
+          <rect x="0" y="8"    width="42" height="3.2" fill="url(#jd-g)"/>
+          <rect x="0" y="13"   width="42" height="3.2" fill="url(#jd-g)"/>
+          <rect x="0" y="18"   width="42" height="3.2" fill="url(#jd-g)"/>
+          <rect x="0" y="23"   width="42" height="3.2" fill="url(#jd-g)"/>
+          <rect x="0" y="28"   width="42" height="3.2" fill="url(#jd-g)"/>
+        </g>
+      </svg>
+    </span>
   </a>
   <div class="nav-links">
     ${NAV_LINKS.map(s => `<a href="#${s}" class="nav-link" data-section="${s}">${s.charAt(0).toUpperCase() + s.slice(1)}</a>`).join("")}
