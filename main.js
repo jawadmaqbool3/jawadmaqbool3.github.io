@@ -93,6 +93,9 @@ document.getElementById("hero").innerHTML = `
       </div>
     </div>` : ""}
   </div>
+  <div class="hero-scroll">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
 `;
 
 // ABOUT
@@ -148,8 +151,8 @@ document.getElementById("about").innerHTML = `
 // SKILLS
 const skillCategories = [["All", Object.values(d.skills).flat()], ...Object.entries(d.skills)];
 
-const skillTabsHTML = skillCategories.map(([name], i) => `
-  <button class="skill-tab ${i === 0 ? "active" : ""}" data-index="${i}">${name}</button>
+const skillTabsHTML = skillCategories.map(([name, items], i) => `
+  <button class="skill-tab ${i === 0 ? "active" : ""}" data-index="${i}">${name}<span class="skill-tab-count">${items.length}</span></button>
 `).join("");
 
 const skillPanelsHTML = skillCategories.map(([, items], i) => `
@@ -379,7 +382,7 @@ document.getElementById("contact").innerHTML = `
       <a href="${d.contact.linkedin}" target="_blank" class="contact-link card">
         ${SVG.linkedin} LinkedIn
       </a>
-      <a href="${d.upwork.profile_url}" target="_blank" class="contact-link upwork-link">
+      <a href="${d.upwork.profile_url}" target="_blank" class="contact-link card upwork-link">
         ${SVG.upwork} Upwork Profile
       </a>
     </div>
@@ -389,7 +392,48 @@ document.getElementById("contact").innerHTML = `
 
 // FOOTER
 document.getElementById("footer").innerHTML = `
-  <p>Built by ${d.name} · ${new Date().getFullYear()}</p>
+  <div class="footer-inner">
+    <div class="footer-social">
+      <a href="${d.contact.github}" target="_blank" class="footer-social-link" title="GitHub">${SVG.github}</a>
+      <div class="footer-divider"></div>
+      <a href="${d.contact.linkedin}" target="_blank" class="footer-social-link" title="LinkedIn">${SVG.linkedin}</a>
+      <div class="footer-divider"></div>
+      <a href="mailto:${d.contact.email}" class="footer-social-link" title="Email">${SVG.email}</a>
+    </div>
+    <p class="footer-copy">Designed &amp; Built by <strong style="color:var(--text)">${d.name}</strong> &nbsp;·&nbsp; ${new Date().getFullYear()}</p>
+  </div>
 `;
+
+// SCROLL TO TOP
+(function () {
+  const btn = document.createElement("button");
+  btn.className = "scroll-top";
+  btn.setAttribute("aria-label", "Scroll to top");
+  btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>`;
+  document.body.appendChild(btn);
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  window.addEventListener("scroll", () => btn.classList.toggle("visible", window.scrollY > 400), { passive: true });
+})();
+
+// SCROLL REVEAL
+(function () {
+  const targets = document.querySelectorAll(
+    "#about .about-bio-text, #about .about-bio-meta, #about .about-stat-card, " +
+    "#about .about-focus, .timeline-item, .edu-card, .achievement-card, " +
+    ".testimonial-card, #contact .contact-link"
+  );
+  const parentCounters = new Map();
+  targets.forEach(el => {
+    el.classList.add("reveal");
+    const p = el.parentElement;
+    const idx = parentCounters.get(p) || 0;
+    if (idx > 0) el.style.transitionDelay = `${Math.min(idx * 0.1, 0.4)}s`;
+    parentCounters.set(p, idx + 1);
+  });
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("revealed"); obs.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: "0px 0px -30px 0px" });
+  targets.forEach(el => obs.observe(el));
+})();
 
 document.title = `${d.name} — ${d.title}`;
