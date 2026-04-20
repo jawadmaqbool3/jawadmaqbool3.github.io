@@ -1,3 +1,232 @@
+// SPACE BACKGROUND
+(function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "stars-canvas";
+  document.body.insertBefore(canvas, document.body.firstChild);
+  const ctx = canvas.getContext("2d");
+  let W, H, stars;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  // ── Stars ──
+  function mkStar() {
+    return {
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.1 + 0.15,
+      speed: Math.random() * 0.22 + 0.04,
+      opacity: Math.random() * 0.55 + 0.15,
+      phase: Math.random() * Math.PI * 2,
+      phaseSpeed: Math.random() * 0.018 + 0.004,
+    };
+  }
+
+  // ── (stations removed) ──
+  function mkStation(visible) {
+    const fromLeft = Math.random() < 0.5;
+    return {
+      x: visible ? Math.random() * W * 0.6 + W * 0.2 : (fromLeft ? -140 : W + 140),
+      y: Math.random() * H * 0.65 + H * 0.1,
+      vx: fromLeft ? (Math.random() * 0.1 + 0.05) : -(Math.random() * 0.1 + 0.05),
+      vy: (Math.random() - 0.5) * 0.03,
+      angle: Math.random() * Math.PI * 0.25 - 0.12,
+      rotSpeed: (Math.random() - 0.5) * 0.0008,
+      scale: Math.random() * 0.35 + 0.8,
+      opacity: Math.random() * 0.25 + 0.5,
+      blink: Math.random() * Math.PI * 2,
+    };
+  }
+
+  function rRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function drawSolarWing(ox, oy) {
+    const silver = "rgba(200,215,230,0.9)";
+    const panelFill = "rgba(25,55,120,0.75)";
+    const cellLine  = "rgba(70,120,210,0.5)";
+    // arm
+    ctx.fillStyle = "rgba(180,200,220,0.4)"; ctx.strokeStyle = silver; ctx.lineWidth = 0.7;
+    ctx.fillRect(ox - 1, oy < 0 ? oy : 2, 2, Math.abs(oy) - 2);
+    ctx.strokeRect(ox - 1, oy < 0 ? oy : 2, 2, Math.abs(oy) - 2);
+    // panel body
+    const py = oy < 0 ? oy - 13 : oy;
+    ctx.fillStyle = panelFill; ctx.strokeStyle = "rgba(80,140,220,0.85)"; ctx.lineWidth = 0.7;
+    ctx.fillRect(ox - 20, py, 40, 13); ctx.strokeRect(ox - 20, py, 40, 13);
+    // cell grid columns
+    ctx.strokeStyle = cellLine; ctx.lineWidth = 0.35;
+    for (let gx = ox - 20; gx <= ox + 20; gx += 8) {
+      ctx.beginPath(); ctx.moveTo(gx, py); ctx.lineTo(gx, py + 13); ctx.stroke();
+    }
+    // cell grid rows
+    for (let row = 1; row < 3; row++) {
+      ctx.beginPath(); ctx.moveTo(ox - 20, py + row * 4.3); ctx.lineTo(ox + 20, py + row * 4.3); ctx.stroke();
+    }
+  }
+
+  function drawStation(s) {
+    ctx.save();
+    ctx.translate(s.x, s.y);
+    ctx.rotate(s.angle);
+    ctx.scale(s.scale, s.scale);
+    ctx.globalAlpha = s.opacity;
+
+    const silver = "rgba(205,218,232,1)";
+    const struct = "rgba(175,195,215,0.45)";
+
+    // ── Integrated Truss Structure (long horizontal spine) ──
+    ctx.fillStyle = struct; ctx.strokeStyle = silver; ctx.lineWidth = 0.8;
+    ctx.fillRect(-80, -2.2, 160, 4.4);
+    ctx.strokeRect(-80, -2.2, 160, 4.4);
+    // truss cross-bracing
+    ctx.strokeStyle = "rgba(160,180,205,0.3)"; ctx.lineWidth = 0.4;
+    for (let tx = -80; tx < 80; tx += 16) {
+      ctx.beginPath(); ctx.moveTo(tx, -2.2); ctx.lineTo(tx + 8, 2.2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(tx + 8, -2.2); ctx.lineTo(tx, 2.2); ctx.stroke();
+    }
+
+    // ── Pressurised modules (cluster at center) ──
+    ctx.strokeStyle = silver; ctx.lineWidth = 0.8;
+    const mods = [
+      [-26, 12, 10], [-14, 13, 10], [-1, 14, 11],
+      [ 12, 12, 10], [ 23, 11,  9],
+    ];
+    mods.forEach(([mx, mw, mh]) => {
+      ctx.fillStyle = "rgba(185,205,225,0.5)";
+      rRect(mx, -mh / 2, mw, mh, 2.5);
+      ctx.fill(); ctx.stroke();
+      // window dots
+      ctx.fillStyle = "rgba(160,220,255,0.6)";
+      for (let wi = 0; wi < 3; wi++) {
+        ctx.beginPath(); ctx.arc(mx + 2.5 + wi * 3.5, 0, 0.9, 0, Math.PI * 2); ctx.fill();
+      }
+    });
+
+    // ── Vertical connector / Node ──
+    ctx.fillStyle = "rgba(185,205,225,0.45)"; ctx.strokeStyle = silver;
+    rRect(-6, -14, 12, 28, 2); ctx.fill(); ctx.stroke();
+
+    // ── Solar Array Wings — 4 pairs ──
+    drawSolarWing(-55, -16);
+    drawSolarWing(-55,  16);
+    drawSolarWing( 35, -16);
+    drawSolarWing( 35,  16);
+
+    // ── Radiator panels (white, perpendicular) ──
+    ctx.fillStyle = "rgba(215,228,240,0.28)"; ctx.strokeStyle = "rgba(190,210,228,0.55)"; ctx.lineWidth = 0.6;
+    ctx.fillRect(-10, -22, 20, 6);  ctx.strokeRect(-10, -22, 20, 6);
+    ctx.fillRect(-10,  16, 20, 6);  ctx.strokeRect(-10,  16, 20, 6);
+
+    // ── Docked Soyuz capsule (right tip) ──
+    ctx.fillStyle = "rgba(175,195,215,0.5)"; ctx.strokeStyle = silver; ctx.lineWidth = 0.8;
+    rRect(68, -3.5, 10, 7, 1.5); ctx.fill(); ctx.stroke();
+    // service module
+    ctx.fillStyle = "rgba(130,160,195,0.35)";
+    rRect(78, -2, 6, 4, 1); ctx.fill(); ctx.stroke();
+    // Soyuz mini solar
+    ctx.fillStyle = "rgba(25,55,120,0.7)"; ctx.strokeStyle = "rgba(80,140,220,0.8)";
+    ctx.fillRect(72, -9, 7, 4);  ctx.strokeRect(72, -9, 7, 4);
+    ctx.fillRect(72,  5, 7, 4);  ctx.strokeRect(72,  5, 7, 4);
+
+    // ── Blinking nav lights ──
+    s.blink += 0.025;
+    const g = 0.35 + 0.65 * Math.abs(Math.sin(s.blink));
+    const r2 = 0.35 + 0.65 * Math.abs(Math.sin(s.blink + 1.8));
+    ctx.fillStyle = `rgba(0,255,160,${g})`; ctx.beginPath(); ctx.arc( 0,  0, 1.8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = `rgba(255,80,80,${r2 * 0.8})`; ctx.beginPath(); ctx.arc(30, 0, 1.2, 0, Math.PI * 2); ctx.fill();
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  // ── Comets ──
+  function mkComet() {
+    return {
+      active: false,
+      timer: Math.random() * 500 + 250,
+      x: 0, y: 0, vx: 0, vy: 0,
+      length: Math.random() * 90 + 60,
+      width:  Math.random() * 1.4 + 0.5,
+      opacity: Math.random() * 0.5 + 0.45,
+    };
+  }
+
+  function spawnComet(c) {
+    c.active = true;
+    // enter from top edge or left edge randomly
+    if (Math.random() < 0.6) {
+      c.x = Math.random() * W; c.y = -10;
+      c.vx = (Math.random() - 0.5) * 3.5;
+      c.vy = Math.random() * 5 + 3.5;
+    } else {
+      c.x = -10; c.y = Math.random() * H * 0.5;
+      c.vx = Math.random() * 5 + 3.5;
+      c.vy = Math.random() * 3 + 1;
+    }
+  }
+
+  function drawComet(c) {
+    const angle = Math.atan2(c.vy, c.vx);
+    const tx = c.x - Math.cos(angle) * c.length;
+    const ty = c.y - Math.sin(angle) * c.length;
+    const grad = ctx.createLinearGradient(c.x, c.y, tx, ty);
+    grad.addColorStop(0,   `rgba(255,255,255,${c.opacity})`);
+    grad.addColorStop(0.25,`rgba(180,210,255,${c.opacity * 0.6})`);
+    grad.addColorStop(1,   `rgba(100,150,255,0)`);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(c.x, c.y);
+    ctx.lineTo(tx, ty);
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = c.width;
+    ctx.lineCap = "round";
+    ctx.stroke();
+    // bright head glow
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.width * 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${c.opacity})`;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function init() {
+    resize();
+    stars = Array.from({ length: 200 }, mkStar);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // stars
+    stars.forEach(s => {
+      s.phase += s.phaseSpeed;
+      const a = s.opacity * (0.55 + 0.45 * Math.sin(s.phase));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
+      s.y -= s.speed;
+      if (s.y + s.r < 0) { s.y = H + s.r; s.x = Math.random() * W; }
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener("resize", resize, { passive: true });
+  init();
+  draw();
+})();
+
 const d = portfolioData;
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];

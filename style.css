@@ -70,7 +70,7 @@ body::after {
   border-radius: 50%;
   filter: blur(120px);
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 body::before {
@@ -85,7 +85,16 @@ body::after {
   background: rgba(0, 212, 170, 0.12);
 }
 
-main, nav, footer { position: relative; z-index: 1; }
+main, nav, footer { position: relative; z-index: 2; }
+
+#stars-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
 
 a { color: inherit; text-decoration: none; }
 
@@ -109,15 +118,18 @@ nav {
   gap: 2rem;
   padding: 0 2rem;
   height: 64px;
-  background: rgba(11, 13, 20, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
-  transition: box-shadow 0.3s, background 0.3s;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+  transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, backdrop-filter 0.4s;
 }
 
 nav.scrolled {
-  background: rgba(11, 13, 20, 0.88);
+  background: rgba(11, 13, 20, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom-color: var(--glass-border);
   box-shadow: 0 4px 32px rgba(0,0,0,0.4);
 }
 
