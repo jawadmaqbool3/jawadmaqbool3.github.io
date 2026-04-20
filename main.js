@@ -218,23 +218,49 @@ document.getElementById("experience").innerHTML += `
 `;
 
 // PROJECTS CAROUSEL
-const projectCardHTML = p => `
+const starsHTML = rating => Array.from({length: 5}, (_, i) =>
+  `<svg width="13" height="13" viewBox="0 0 24 24" fill="${i < Math.round(rating) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+).join("");
+
+const projectCardHTML = (p, idx) => `
   <div class="carousel-card">
-    <div class="carousel-card-header">
-      <div class="carousel-card-title">${p.name}</div>
-      ${p.rating ? `<span class="project-rating">${SVG.star} ${p.rating.toFixed(1)}</span>` : ""}
-    </div>
-    <p class="carousel-card-desc">${p.description}</p>
-    ${p.feedback ? `<p class="project-feedback">"${p.feedback}"</p>` : ""}
-    <div class="carousel-card-footer">
-      <div class="project-tech">${p.tech.map(t => `<span class="tech-tag">${t}</span>`).join("")}</div>
-      ${p.github || p.live ? `<div class="project-links">
-        ${p.github ? `<a href="${p.github}" target="_blank" class="project-link">${SVG.github} GitHub</a>` : ""}
-        ${p.live ? `<a href="${p.live}" target="_blank" class="project-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Live Demo
-        </a>` : ""}
-      </div>` : ""}
+    <div class="proj-card-inner">
+
+      <div class="proj-card-left">
+        <span class="proj-index">${String(idx + 1).padStart(2, "0")}</span>
+        <h3 class="proj-title">${p.name}</h3>
+        <p class="proj-desc">${p.description}</p>
+        ${p.feedback ? `
+        <blockquote class="proj-feedback">
+          <svg class="proj-quote-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          ${p.feedback}
+        </blockquote>` : ""}
+      </div>
+
+      <div class="proj-card-right">
+        ${p.rating ? `
+        <div class="proj-rating-block">
+          <div class="proj-stars">${starsHTML(p.rating)}</div>
+          <span class="proj-rating-label">Client Rating</span>
+        </div>` : ""}
+
+        <div class="proj-tech-block">
+          <p class="proj-tech-label">Tech Stack</p>
+          <div class="proj-tech-tags">
+            ${p.tech.map(t => `<span class="tech-tag">${t}</span>`).join("")}
+          </div>
+        </div>
+
+        ${p.github || p.live ? `
+        <div class="proj-links">
+          ${p.github ? `<a href="${p.github}" target="_blank" class="proj-link">${SVG.github} GitHub</a>` : ""}
+          ${p.live ? `<a href="${p.live}" target="_blank" class="proj-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Live Demo
+          </a>` : ""}
+        </div>` : ""}
+      </div>
+
     </div>
   </div>
 `;
@@ -255,7 +281,7 @@ document.getElementById("projects").innerHTML = `
   </div>
   <div class="carousel-viewport">
     <div class="carousel-track" id="proj-track">
-      ${d.projects.map(p => projectCardHTML(p)).join("")}
+      ${d.projects.map((p, i) => projectCardHTML(p, i)).join("")}
     </div>
   </div>
   <div class="carousel-dots" id="proj-dots">
@@ -277,16 +303,24 @@ document.getElementById("projects").innerHTML = `
     counter.textContent = current + 1;
   }
 
-  document.getElementById("proj-prev").addEventListener("click", () => goTo(current - 1));
-  document.getElementById("proj-next").addEventListener("click", () => goTo(current + 1));
-  dots.forEach(dot => dot.addEventListener("click", () => goTo(+dot.dataset.i)));
+  document.getElementById("proj-prev").addEventListener("click", () => { goTo(current - 1); resetTimer(); });
+  document.getElementById("proj-next").addEventListener("click", () => { goTo(current + 1); resetTimer(); });
+  dots.forEach(dot => dot.addEventListener("click", () => { goTo(+dot.dataset.i); resetTimer(); }));
+
+  // auto-play
+  let timer = setInterval(() => goTo(current + 1), 4000);
+  function resetTimer() { clearInterval(timer); timer = setInterval(() => goTo(current + 1), 4000); }
+
+  const viewport = document.querySelector(".carousel-viewport");
+  viewport.addEventListener("mouseenter", () => clearInterval(timer));
+  viewport.addEventListener("mouseleave", () => { timer = setInterval(() => goTo(current + 1), 4000); });
 
   // swipe support
   let startX = 0;
   track.addEventListener("touchstart", e => { startX = e.touches[0].clientX; }, { passive: true });
   track.addEventListener("touchend", e => {
     const diff = startX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
+    if (Math.abs(diff) > 50) { goTo(diff > 0 ? current + 1 : current - 1); resetTimer(); }
   });
 })();
 
