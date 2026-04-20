@@ -119,19 +119,19 @@ document.getElementById("about").innerHTML = `
   </div>
 
   <div class="about-stats-row">
-    <div class="about-stat-card">
+    <div class="about-stat-card card">
       <div class="about-stat-value">${d.experience_years}+</div>
       <div class="about-stat-label">Years Experience</div>
     </div>
-    <div class="about-stat-card">
+    <div class="about-stat-card card">
       <div class="about-stat-value">${d.upwork.job_success_score}%</div>
       <div class="about-stat-label">Upwork Job Success</div>
     </div>
-    <div class="about-stat-card">
+    <div class="about-stat-card card">
       <div class="about-stat-value">${d.upwork.average_rating.toFixed(1)}<span class="about-stat-unit">★</span></div>
       <div class="about-stat-label">Average Rating</div>
     </div>
-    <div class="about-stat-card">
+    <div class="about-stat-card card">
       <div class="about-stat-value">${d.upwork.total_completed_jobs}+</div>
       <div class="about-stat-label">Jobs Completed</div>
     </div>
@@ -175,7 +175,7 @@ document.getElementById("skills").addEventListener("click", e => {
 
 // EXPERIENCE
 const timelineHTML = d.experience.map(e => `
-  <div class="timeline-item">
+  <div class="timeline-item card">
     <div class="timeline-header">
       <div>
         <div class="timeline-role">${e.role}</div>
@@ -201,7 +201,7 @@ document.getElementById("experience").innerHTML = `
 
 // EDUCATION (appended into experience section)
 const educationHTML = d.education.map(e => `
-  <div class="edu-card">
+  <div class="edu-card card">
     <div class="edu-left">
       <div class="edu-degree">${e.degree}</div>
       <div class="edu-institution">${e.institution}</div>
@@ -212,7 +212,7 @@ const educationHTML = d.education.map(e => `
 `).join("");
 
 document.getElementById("experience").innerHTML += `
-  <p class="section-label" style="margin-top:3rem">Education</p>
+  <p class="section-label" style="margin-top:6rem">Education</p>
   <h2 class="section-title">Academic Background</h2>
   ${educationHTML}
 `;
@@ -223,7 +223,7 @@ const starsHTML = rating => Array.from({length: 5}, (_, i) =>
 ).join("");
 
 const projectCardHTML = (p, idx) => `
-  <div class="carousel-card">
+  <div class="carousel-card card">
     <div class="proj-card-inner">
 
       <div class="proj-card-left">
@@ -326,7 +326,7 @@ document.getElementById("projects").innerHTML = `
 
 // ACHIEVEMENTS
 const achievementsHTML = d.achievements.map(a => `
-  <div class="achievement-card">
+  <div class="achievement-card card">
     <div class="achievement-icon">${a.icon}</div>
     <div class="achievement-body">
       <div class="achievement-type">${a.type}</div>
@@ -346,7 +346,7 @@ document.getElementById("achievements").innerHTML = `
 
 // TESTIMONIALS (inside achievements section as continuation)
 const testimonialsHTML = d.testimonials.map(t => `
-  <div class="testimonial-card">
+  <div class="testimonial-card card">
     <div class="testimonial-quote">"</div>
     <p class="testimonial-text">${t.text}</p>
     <div class="testimonial-author">
@@ -370,13 +370,13 @@ document.getElementById("contact").innerHTML = `
     <h2 class="section-title">Let's Work Together</h2>
     <p class="contact-text">I'm currently <strong>${d.availability.toLowerCase()}</strong> and open to new opportunities, SaaS projects, API integrations, or backend consulting. Let's build something great.</p>
     <div class="contact-links">
-      <a href="mailto:${d.contact.email}" class="contact-link">
+      <a href="mailto:${d.contact.email}" class="contact-link card">
         ${SVG.email} Email Me
       </a>
-      <a href="${d.contact.github}" target="_blank" class="contact-link">
+      <a href="${d.contact.github}" target="_blank" class="contact-link card">
         ${SVG.github} GitHub
       </a>
-      <a href="${d.contact.linkedin}" target="_blank" class="contact-link">
+      <a href="${d.contact.linkedin}" target="_blank" class="contact-link card">
         ${SVG.linkedin} LinkedIn
       </a>
       <a href="${d.upwork.profile_url}" target="_blank" class="contact-link upwork-link">

@@ -18,6 +18,29 @@
 
 html { scroll-behavior: smooth; }
 
+/* ── CARD STANDARD ── */
+.card {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 1rem;
+  box-shadow: var(--glass-shadow);
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+
+
+.card:hover {
+  border-color: var(--glass-border-hi);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* carousel and edu card need clipping for inner layout */
+.carousel-card, .edu-card { overflow: hidden; }
+.carousel-card::before { display: none; }
+
 /* ── BACKGROUND with ambient light blobs ── */
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -439,19 +462,7 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 }
 
 .about-stat-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.875rem;
   padding: 1.5rem 1.25rem;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-}
-
-.about-stat-card:hover {
-  border-color: var(--glass-border-hi);
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
 }
 
 .about-stat-value {
@@ -574,17 +585,29 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
   background: linear-gradient(to bottom, var(--accent), transparent);
 }
 
-.timeline-item { position: relative; margin-bottom: 2.5rem; }
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.25rem;
+  padding: 1.5rem 1.75rem;
+}
 
-.timeline-item::before {
+/* dot on the timeline line */
+.timeline-item::after {
   content: '';
   position: absolute;
-  left: -2.4rem; top: 0.4rem;
-  width: 10px; height: 10px;
+  left: -2.35rem; top: 1.65rem;
+  width: 13px; height: 13px;
   border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 0 3px rgba(108,99,255,0.3);
+  background: var(--bg);
+  border: 2.5px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2), 0 0 10px rgba(108, 99, 255, 0.4);
+  z-index: 2;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.timeline-item:hover::after {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.2), 0 0 14px rgba(0, 212, 170, 0.4);
 }
 
 .timeline-header {
@@ -664,25 +687,9 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 .carousel-card {
   min-width: 100%;
   box-sizing: border-box;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-top: 2px solid transparent;
-  border-radius: 1rem;
-  box-shadow: var(--glass-shadow);
-  overflow: hidden;
-  position: relative;
 }
 
-/* gradient top accent line */
-.carousel-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-}
+.carousel-card:hover { transform: none; }
 
 /* two-panel inner layout */
 .proj-card-inner {
@@ -836,19 +843,14 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 
 
 /* ── EDUCATION ── */
+
 .edu-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.875rem;
   padding: 1.75rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  box-shadow: var(--glass-shadow);
 }
 
 .edu-degree      { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.25rem; }
@@ -875,21 +877,9 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 }
 
 .achievement-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.875rem;
   padding: 1.75rem;
   display: flex;
   gap: 1.25rem;
-  box-shadow: var(--glass-shadow);
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.achievement-card:hover {
-  border-color: var(--glass-border-hi);
-  box-shadow: 0 8px 40px rgba(108,99,255,0.15);
 }
 
 .achievement-icon     { font-size: 2.25rem; line-height: 1; flex-shrink: 0; }
@@ -908,13 +898,7 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 }
 
 .testimonial-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.875rem;
   padding: 2rem;
-  box-shadow: var(--glass-shadow);
 }
 
 .testimonial-quote {
@@ -960,18 +944,12 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.5rem;
   font-size: 0.9rem;
   color: var(--muted);
-  transition: all 0.2s;
 }
 
-.contact-link:hover { border-color: var(--glass-border-hi); color: var(--text); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-.contact-link.upwork-link:hover { border-color: rgba(20,168,0,0.5); color: #14a800; }
+.contact-link:hover { color: var(--text); }
+.contact-link.upwork-link:hover { color: #14a800; }
 
 .contact-location {
   display: inline-flex;
