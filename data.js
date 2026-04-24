@@ -156,7 +156,7 @@ const portfolioData = {
     },
   ],
 
-  projects: [
+  feedbacks: [
     {
       name: "Full Stack Laravel and Node.js Developer Needed",
       description:

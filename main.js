@@ -247,7 +247,7 @@ const SVG = {
 };
 
 // NAV
-const NAV_LINKS = ["about","skills","experience","projects","achievements","contact"];
+const NAV_LINKS = ["about","skills","experience","feedbacks","achievements","contact"];
 
 document.getElementById("nav").innerHTML = `
   <a href="#hero" class="nav-logo">
@@ -322,7 +322,7 @@ document.getElementById("hero").innerHTML = `
       <p class="hero-role">${d.title}</p>
       <p class="hero-tagline">${d.tagline}</p>
       <div class="hero-actions">
-        <a href="#projects" class="btn btn-primary">View My Work</a>
+        <a href="#feedbacks" class="btn btn-primary">View My Work</a>
         <a href="#contact" class="btn btn-outline">Get In Touch</a>
       </div>
       <div class="hero-upwork-strip">
@@ -476,7 +476,7 @@ document.getElementById("experience").innerHTML += `
   ${educationHTML}
 `;
 
-// PROJECTS CAROUSEL
+// FEEDBACKS CAROUSEL
 const starsHTML = rating => Array.from({length: 5}, (_, i) =>
   `<svg width="13" height="13" viewBox="0 0 24 24" fill="${i < Math.round(rating) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
 ).join("");
@@ -524,15 +524,15 @@ const projectCardHTML = (p, idx) => `
   </div>
 `;
 
-document.getElementById("projects").innerHTML = `
+document.getElementById("feedbacks").innerHTML = `
   <p class="section-label">Selected Work</p>
-  <div class="projects-carousel-header">
-    <h2 class="section-title" style="margin-bottom:0">Projects</h2>
+  <div class="feedbacks-carousel-header">
+    <h2 class="section-title" style="margin-bottom:0">Feedbacks</h2>
     <div class="carousel-controls">
       <button class="carousel-btn" id="proj-prev" aria-label="Previous">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <span class="carousel-counter"><span id="proj-current">1</span> / <span id="proj-total">${d.projects.length}</span></span>
+      <span class="carousel-counter"><span id="proj-current">1</span> / <span id="proj-total">${d.feedbacks.length}</span></span>
       <button class="carousel-btn" id="proj-next" aria-label="Next">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
@@ -540,11 +540,11 @@ document.getElementById("projects").innerHTML = `
   </div>
   <div class="carousel-viewport">
     <div class="carousel-track" id="proj-track">
-      ${d.projects.map((p, i) => projectCardHTML(p, i)).join("")}
+      ${d.feedbacks.map((p, i) => projectCardHTML(p, i)).join("")}
     </div>
   </div>
   <div class="carousel-dots" id="proj-dots">
-    ${d.projects.map((_, i) => `<button class="carousel-dot ${i === 0 ? "active" : ""}" data-i="${i}"></button>`).join("")}
+    ${d.feedbacks.map((_, i) => `<button class="carousel-dot ${i === 0 ? "active" : ""}" data-i="${i}"></button>`).join("")}
   </div>
 `;
 
@@ -553,7 +553,7 @@ document.getElementById("projects").innerHTML = `
   const dots = document.querySelectorAll("#proj-dots .carousel-dot");
   const counter = document.getElementById("proj-current");
   let current = 0;
-  const total = d.projects.length;
+  const total = d.feedbacks.length;
 
   function goTo(n) {
     current = (n + total) % total;
