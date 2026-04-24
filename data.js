@@ -19,8 +19,7 @@ const portfolioData = {
   upwork: {
     job_success_score: 100,
     average_rating: 5.0,
-    total_completed_jobs: 10,
-    in_progress_jobs: 2,
+    total_completed_jobs: 137,
     profile_url: "https://www.upwork.com/freelancers/jawadmaqbool",
   },
 
