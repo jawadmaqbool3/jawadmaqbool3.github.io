@@ -3,7 +3,7 @@ const portfolioData = {
   avatar: "jd-01.png",
   title: "Backend Engineer · Full Stack Developer",
   tagline:
-    "Full-Stack and Backend Engineer with 5+ years of experience building scalable SaaS systems, ERP platforms, and social media API integrations.",
+    "Full-Stack and Backend Engineer with 6+ years of experience building scalable SaaS systems, ERP platforms, and social media API integrations.",
   about:
     "I'm a Full-Stack and Backend Engineer specialized in Laravel, Node.js, and automation-driven architectures. I've built everything from ERP platforms and multi-tenant SaaS systems to chatbot integrations and social media API pipelines. I care deeply about clean system design, scalable architecture, and shipping production-ready code.",
   availability: "Open to Work",
